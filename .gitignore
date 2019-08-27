@@ -1,0 +1,7 @@
+/bins
+/codes
+*_test.go
+docker*
+/models/DB
+/simulation/move_weights.hdf5
+__pycache__

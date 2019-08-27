@@ -1,0 +1,27 @@
+{
+  "1": {
+    "HP": 100,
+    "EXP": 10,
+    "BodyDamage": 1
+  },
+  "2": {
+    "HP": 200,
+    "EXP": 22,
+    "BodyDamage": 1.5
+  },
+  "3": {
+    "HP": 400,
+    "EXP": 36,
+    "BodyDamage": 2.2
+  },
+  "4": {
+    "HP": 600,
+    "EXP": 50,
+    "BodyDamage": 3
+  },
+  "5": {
+    "HP": 900,
+    "EXP": 66,
+    "BodyDamage": 4
+  }
+}

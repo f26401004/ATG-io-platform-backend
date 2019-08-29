@@ -38,7 +38,7 @@ class Game:
       'width': game_width,
       'height': game_height
     }
-    self.redisClient = redis.Redis(host='localhost', port=6379, db=0)
+    self.redisClient = redis.Redis(host=127.0.0.1, port=6379, db=0)
 
 
     self.agent = agent
@@ -108,7 +108,7 @@ class Game:
     self.player_agent.do_move_action(self, action)
     # find the closest stuff and shoot
     for stuff in self.map_info['stuffs']:
-      if (self.player_agent.position, stuff.position) < 200:
+      if util.distance(self.player_agent.position, stuff.position) < 200:
         angle = util.angle(self.player_agent.position, stuff.position)
         self.player_agent.do_shoot_action(self, [1, angle])
         break

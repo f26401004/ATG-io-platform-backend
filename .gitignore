@@ -5,3 +5,4 @@ docker*
 /models/DB
 /simulation/move_weights.hdf5
 __pycache__
+/nginx

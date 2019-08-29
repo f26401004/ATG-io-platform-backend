@@ -10,6 +10,7 @@ import (
     "context"
     "github.com/go-redis/redis"
     "strconv"
+    "os"
 )
 
 type Simulation struct {
@@ -56,7 +57,7 @@ func simulationWorker(id int) {
         defer cancel()
 
         // initialize the command instance
-        argstr := []string{ "-c", fmt.Sprintf("python3 ./simulation/sandboxSimulation.py %s %d", simulation.Username, id) }
+        argstr := []string{ "-c", fmt.Sprintf("python3 ./simulation/sandboxSimulation.py %s %d ", simulation.Username, id) }
         cmd := exec.CommandContext(ctx, "/bin/sh", argstr...)
 
         // run the command with goroutine
@@ -84,8 +85,11 @@ func simulationWorker(id int) {
                 cancel()
                 break
             }
-            msg, _ := pubsub.ReceiveMessage()
-            fmt.Println(msg.Channel, msg.Payload)
+            msg, errReceive := pubsub.ReceiveMessage()
+            if (errReceive != nil) {
+                simulation.Status = -1
+                break
+            }
             simulation.Socket.WriteMessage(websocket.TextMessage, []byte(msg.Payload))
         }
         if (simulation.Status == -1) {

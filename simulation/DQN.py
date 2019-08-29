@@ -170,7 +170,7 @@ class DQNMoveAgent(object):
     model.add(Dense(output_dim=16, activation='relu'))
     model.add(Dropout(0.15))
     model.add(Dense(output_dim=9, activation='softmax'))
-    opt = RAdam(self.learning_rate)
+    opt = Adam(self.learning_rate)
     model.compile(loss='mse', optimizer=opt)
  
     if weights:

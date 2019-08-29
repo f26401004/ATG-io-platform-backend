@@ -12,8 +12,8 @@ func main() {
     // initialize the server router
     router := gin.Default()
     router.Use(cors.Default())
-    // server serve frontend static files.
-    router.StaticFile("/", "./public")
+    // // server serve frontend static files.
+    // router.StaticFile("/", "./public")
 
     // initialize the simulation environment
     simulation.InitSimulationEnvironment()

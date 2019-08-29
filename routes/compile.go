@@ -55,7 +55,7 @@ func CompileEndpoint (c *gin.Context) {
 
 func transferCode(username string) (bool, error) {
     var bucket, projectID string
-    bucket = "ATG_io_code_storage"
+    bucket = "ATG_io_code_bucket"
     projectID = util.MustGetEnv("GOLANG_PROJECT_ID", projectID)
     
     // open the code file

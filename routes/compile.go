@@ -50,7 +50,7 @@ func CompileEndpoint (c *gin.Context) {
     }
     c.String(http.StatusOK, "Compile result: pass")
     // transfer the code to storage
-    transferCode(username)
+    // transferCode(username)
 }
 
 func transferCode(username string) (bool, error) {

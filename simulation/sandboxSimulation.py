@@ -38,7 +38,7 @@ class Game:
       'width': game_width,
       'height': game_height
     }
-    self.redisClient = redis.Redis(host=127.0.0.1, port=6379, db=0)
+    self.redisClient = redis.Redis(host='127.0.0.1', port=6379, db=0)
 
 
     self.agent = agent
@@ -261,22 +261,24 @@ class Game:
       number += i
     action.append(float(number))
     # do the action
-    if (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 1, 0, 0, 0, 0, 0, 0, 0])
-    elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 1, 0, 0, 0, 0, 0, 0])
-    elif (action[2] == 0 and action[3] == 0 and action[4] == 1 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 0, 1, 0, 0, 0, 0, 0])
-    elif (action[2] == 0 and action[3] == 0 and action[4] == 0 and action[5] == 1):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 1, 0, 0, 0, 0])
-    elif (action[2] == 1 and action[3] == 0 and action[4] == 1 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 1, 0, 0, 0])
-    elif (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 1):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 1, 0, 0])
-    elif (action[2] == 0 and action[3] == 1 and action[4] == 1 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 1, 0])
-    elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 1):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 0, 1])
+    # if (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 0):
+    #   self.player_user.do_move_action(self, [0, 1, 0, 0, 0, 0, 0, 0, 0])
+    # elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 0):
+    #   self.player_user.do_move_action(self, [0, 0, 1, 0, 0, 0, 0, 0, 0])
+    # elif (action[2] == 0 and action[3] == 0 and action[4] == 1 and action[5] == 0):
+    #   self.player_user.do_move_action(self, [0, 0, 0, 1, 0, 0, 0, 0, 0])
+    # elif (action[2] == 0 and action[3] == 0 and action[4] == 0 and action[5] == 1):
+    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 1, 0, 0, 0, 0])
+    # elif (action[2] == 1 and action[3] == 0 and action[4] == 1 and action[5] == 0):
+    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 1, 0, 0, 0])
+    # elif (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 1):
+    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 1, 0, 0])
+    # elif (action[2] == 0 and action[3] == 1 and action[4] == 1 and action[5] == 0):
+    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 1, 0])
+    # elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 1):
+    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 0, 1])
+    # else:
+    self.player_user.do_move_action(self, [1, 0, 0, 0, 0, 0, 0, 0, 0])
     self.player_user.do_shoot_action(self, action[0:2])
     
 

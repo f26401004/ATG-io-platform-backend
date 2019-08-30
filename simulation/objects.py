@@ -132,6 +132,12 @@ class Player(GameObject):
   
   def update(self):
     self.shoot_status['cd'] -= 0 if self.shoot_status['cd'] <= 0 else 1
+    self.acceleration = {
+      'up': 0,
+      'down': 0,
+      'left': 0,
+      'right': 0
+    }
     if (self.move_direction['up']):
       self.acceleration['up'] = 10
     if (self.move_direction['down']):
@@ -152,8 +158,7 @@ class Player(GameObject):
     if self.acceleration['right'] - self.acceleration['left'] > 0:
       self.velocity['x'] = min((self.acceleration['right'] - self.acceleration['left']) * friction, math.sqrt(self.status['move_speed'] + 5))
     else:
-      self.velocity['x'] = min((self.acceleration['right'] - self.acceleration['left']) * friction, math.sqrt(self.status['move_speed'] + 5)* (-1))
-
+      self.velocity['x'] = max((self.acceleration['right'] - self.acceleration['left']) * friction, math.sqrt(self.status['move_speed'] + 5)* (-1))
     
     self.position['x'] = min(max(self.position['x'] + self.velocity['x'], 0), 1600)
     self.position['y'] = min(max(self.position['y'] + self.velocity['y'], 0), 900)

@@ -10,7 +10,6 @@ import (
     "context"
     "github.com/go-redis/redis"
     "strconv"
-    "os"
 )
 
 type Simulation struct {

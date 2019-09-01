@@ -77,7 +77,7 @@ class Game:
 
   def initialize(self, agent):
     # random generate stuff
-    for i in range(10):
+    for i in range(40):
       x = random.randint(50, self.game_width - 50)
       y = random.randint(50, self.game_height - 50)
       # check collision
@@ -106,12 +106,6 @@ class Game:
     action = [0, 0, 0, 0, 0, 0] # shoot, angle, move up, move down, move left, move right
     # let player do the action
     self.player_agent.do_move_action(self, action)
-    # find the closest stuff and shoot
-    for stuff in self.map_info['stuffs']:
-      if util.distance(self.player_agent.position, stuff.position) < 200:
-        angle = util.angle(self.player_agent.position, stuff.position)
-        self.player_agent.do_shoot_action(self, [1, angle])
-        break
     # get the new state after do the action
     new_state = agent.get_state(self)
     # get the reward from the current status
@@ -190,10 +184,10 @@ class Game:
       pair[0].collide_with(pair[1])
       pair[1].collide_with(pair[0])
     for stuff in self.map_info['stuffs']:
-      if stuff.attr['hp'] == 0:
+      if stuff.attr['hp'] <= 0:
         self.map_info['stuffs'].remove(stuff)
     for bullet in self.map_info['bullets']:
-      if bullet.attr['hp'] == 0:
+      if bullet.attr['hp'] <= 0:
         self.map_info['bullets'].remove(bullet)
 
   def object_collision(self, pair):
@@ -226,7 +220,17 @@ class Game:
     reward = self.agent.set_reward(self, self.player_agent.attr['hp'] <= 0, self.player_agent.hit)
     self.agent.train_short_memory(old_state, final_action, reward, new_state, self.player_agent.attr['hp'] <= 0, self.player_agent.hit)
     self.agent.remember(old_state, final_action, reward, new_state, self.player_agent.attr['hp'] <= 0, self.player_agent.hit)
-  
+    
+    # find the closest stuff and shoot
+    for stuff in self.map_info['stuffs']:
+      if util.distance(self.player_agent.position, stuff.position) < 200:
+        angle = util.angle(self.player_agent.position, stuff.position)
+        self.player_agent.do_shoot_action(self, [1, angle])
+        break
+    if util.distance(self.player_agent.position, self.player_user.position) < 200:
+      angle = util.angle(self.player_agent.position, stuff.position)
+      self.player_agent.do_shoot_action(self, [1, angle])
+
   def user_move(self):
     # refactor the game information
     # transform the map information to string
@@ -261,24 +265,24 @@ class Game:
       number += i
     action.append(float(number))
     # do the action
-    # if (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 0):
-    #   self.player_user.do_move_action(self, [0, 1, 0, 0, 0, 0, 0, 0, 0])
-    # elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 0):
-    #   self.player_user.do_move_action(self, [0, 0, 1, 0, 0, 0, 0, 0, 0])
-    # elif (action[2] == 0 and action[3] == 0 and action[4] == 1 and action[5] == 0):
-    #   self.player_user.do_move_action(self, [0, 0, 0, 1, 0, 0, 0, 0, 0])
-    # elif (action[2] == 0 and action[3] == 0 and action[4] == 0 and action[5] == 1):
-    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 1, 0, 0, 0, 0])
-    # elif (action[2] == 1 and action[3] == 0 and action[4] == 1 and action[5] == 0):
-    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 1, 0, 0, 0])
-    # elif (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 1):
-    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 1, 0, 0])
-    # elif (action[2] == 0 and action[3] == 1 and action[4] == 1 and action[5] == 0):
-    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 1, 0])
-    # elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 1):
-    #   self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 0, 1])
-    # else:
-    self.player_user.do_move_action(self, [1, 0, 0, 0, 0, 0, 0, 0, 0])
+    if (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 0):
+      self.player_user.do_move_action(self, [0, 1, 0, 0, 0, 0, 0, 0, 0])
+    elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 0):
+      self.player_user.do_move_action(self, [0, 0, 1, 0, 0, 0, 0, 0, 0])
+    elif (action[2] == 0 and action[3] == 0 and action[4] == 1 and action[5] == 0):
+      self.player_user.do_move_action(self, [0, 0, 0, 1, 0, 0, 0, 0, 0])
+    elif (action[2] == 0 and action[3] == 0 and action[4] == 0 and action[5] == 1):
+      self.player_user.do_move_action(self, [0, 0, 0, 0, 1, 0, 0, 0, 0])
+    elif (action[2] == 1 and action[3] == 0 and action[4] == 1 and action[5] == 0):
+      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 1, 0, 0, 0])
+    elif (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 1):
+      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 1, 0, 0])
+    elif (action[2] == 0 and action[3] == 1 and action[4] == 1 and action[5] == 0):
+      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 1, 0])
+    elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 1):
+      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 0, 1])
+    else:
+      self.player_user.do_move_action(self, [1, 0, 0, 0, 0, 0, 0, 0, 0])
     self.player_user.do_shoot_action(self, action[0:2])
     
 

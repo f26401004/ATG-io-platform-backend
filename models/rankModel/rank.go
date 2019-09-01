@@ -11,7 +11,7 @@ var DBString string = "./models/DB/rank"
 
 type RankData struct {
 	ElapsedTime float32
-	Status bool
+	Result bool
 	Score int
 	UpdatedAt time.Time
 }
@@ -19,7 +19,7 @@ type RankData struct {
 type RankEntry struct {
 	Username string
 	ElapsedTime float32
-	Status bool
+	Result bool
 	Score int
 	UpdatedAt time.Time
 }
@@ -42,7 +42,7 @@ func GetRank (username string) ([]RankEntry, error) {
 		var entry RankEntry
 		entry.ElapsedTime = rankData.ElapsedTime
 		entry.UpdatedAt = rankData.UpdatedAt
-		entry.Status = rankData.Status
+		entry.Result = rankData.Result
 		entry.Score = rankData.Score
 		entry.Username = username
 		return []RankEntry{entry}, nil
@@ -62,7 +62,7 @@ func GetRank (username string) ([]RankEntry, error) {
 		var entry RankEntry
 		entry.ElapsedTime = rankData.ElapsedTime
 		entry.UpdatedAt = rankData.UpdatedAt
-		entry.Status = rankData.Status
+		entry.Result = rankData.Result
 		entry.Score = rankData.Score
 		entry.Username = string(key)
 		rankEntryList = append(rankEntryList, entry)
@@ -72,21 +72,36 @@ func GetRank (username string) ([]RankEntry, error) {
 	return rankEntryList, err
 }
 
-func UpsertRank (username string, elapsedTime float32, status bool, score int) (bool, error) {
-	rankModel, DBError := leveldb.OpenFile(DBString, nil)
+func UpsertRank (username string, elapsedTime float32, result bool, score int) (bool, error) {
+	rankModel, errDB := leveldb.OpenFile(DBString, nil)
 	defer rankModel.Close()
-	if (DBError != nil) {
-		return false, DBError
+	if (errDB != nil) {
+		return false, errDB
 	}
-	
-	data := RankData {
-		ElapsedTime: elapsedTime,
-		Status: status,
-		Score: score,
-		UpdatedAt: time.Now(),
+	// get teh data from database
+	entryByte, errGet := rankModel.Get([]byte(username), nil)
+	if (errGet != nil) {
+		return false, errGet
+	}
+	var entry RankData
+	errUnmarshal := json.Unmarshal(entryByte, &entry)
+	if (errUnmarshal != nil) {
+		return false, errUnmarshal
+	}
+	// compare the origin ranking data
+	if (entry.Result != result) {
+		entry.Result = result
+		entry.ElapsedTime = elapsedTime
+	}
+	if (entry.ElapsedTime > elapsedTime && entry.Result == result) {
+		entry.ElapsedTime = elapsedTime
+	}
+	if (entry.Score < score) {
+		entry.Score = score
 	}
 
-	bytes, errMarshal := json.Marshal(data)
+
+	bytes, errMarshal := json.Marshal(entry)
 	if (errMarshal != nil) {
 		return false, errMarshal
 	}

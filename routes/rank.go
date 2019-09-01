@@ -5,14 +5,15 @@ import (
 	"net/http"
   "github.com/f26401004/ATG-io-platform-backend/models/rankModel"
   "github.com/f26401004/ATG-io-platform-backend/models/userModel"
-	"golang.org/x/crypto/bcrypt"
+  "golang.org/x/crypto/bcrypt"
+  "fmt"
 )
 
 type PostRankInfo struct {
   AuthCode string
   ElapsedTime float32
   Score int
-  Status bool
+  Result bool
 }
 
 func RankEndpoint (c *gin.Context) {
@@ -46,7 +47,7 @@ func UpsertRankEndpoint (c *gin.Context) {
     c.String(http.StatusConflict, "The authCode do not match.")
     return
   }
-
-  rankModel.UpsertRank(username, info.ElapsedTime, info.Status, info.Score)
+  fmt.Println(info)
+  rankModel.UpsertRank(username, info.ElapsedTime, info.Result, info.Score)
 
 }

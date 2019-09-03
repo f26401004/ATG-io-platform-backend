@@ -55,11 +55,11 @@ class DQNMoveAgent(object):
   def get_state(self, game):
     self.stopping = True
     # record previous position
-    if not game.player_agent.position['x'] == self.prev_pos['x']:
+    if not round(game.player_agent.position['x'], 1) == round(self.prev_pos['x'], 1):
       self.prev_pos['x'] = game.player_agent.position['x']
       self.stopping = False
       self.stopping_step = 0
-    if not game.player_agent.position['y'] == self.prev_pos['y']:
+    if not round(game.player_agent.position['y'], 1) == round(self.prev_pos['y'], 1):
       self.prev_pos['y'] = game.player_agent.position['y']
       self.stopping = False
       self.stopping_step = 0
@@ -123,14 +123,14 @@ class DQNMoveAgent(object):
       if math.pi / 4 * 7 < angle <= math.pi * 2:
         state[19] += 1 / util.distance(game.player_agent.position, stuff.position)
     if weight > 0:
-      state[4] = round(state[4] / weight, 2)
-      state[5] = round(state[5] / weight, 2)
-      state[6] = round(state[6] / weight, 2)
-      state[7] = round(state[7] / weight, 2)
-      state[8] = round(state[8] / weight, 2)
-      state[9] = round(state[9] /weight, 2)
-      state[10] = round(state[10] / weight, 2)
-      state[11] = round(state[11] / weight, 2)
+      state[12] = round(state[12] / weight, 2)
+      state[13] = round(state[13] / weight, 2)
+      state[14] = round(state[14] / weight, 2)
+      state[15] = round(state[15] / weight, 2)
+      state[16] = round(state[16] / weight, 2)
+      state[17] = round(state[17] / weight, 2)
+      state[18] = round(state[18] / weight, 2)
+      state[19] = round(state[19] / weight, 2)
  
  
     return np.asarray(state)
@@ -138,14 +138,11 @@ class DQNMoveAgent(object):
   def set_reward(self, game, dead, damage):
     self.reward = 0.001
     if dead:
-      self.reward -= 1
+      self.reward -= 10
     if damage:
-      self.reward -= 1
+      self.reward -= 10
     target_pos = util.dense_position(game, 5)
     # compute the distance between player_agent and the target position
-    dist = util.distance(game.player_agent.position, target_pos)
-    if dist < 200:
-      self.reward += 1 / math.log(dist, 10) if dist > 10 else 1
     for stuff in game.map_info['stuffs']:
       dist = util.distance(game.player_agent.position, stuff.position)
       if dist < game.player_agent.radius * 2.5:

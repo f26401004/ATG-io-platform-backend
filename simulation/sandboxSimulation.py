@@ -77,7 +77,7 @@ class Game:
 
   def initialize(self, agent):
     # random generate stuff
-    for i in range(40):
+    for i in range(100):
       x = random.randint(50, self.game_width - 50)
       y = random.randint(50, self.game_height - 50)
       # check collision
@@ -221,14 +221,23 @@ class Game:
     self.agent.train_short_memory(old_state, final_action, reward, new_state, self.player_agent.attr['hp'] <= 0, self.player_agent.hit)
     self.agent.remember(old_state, final_action, reward, new_state, self.player_agent.attr['hp'] <= 0, self.player_agent.hit)
     
+    target = None
+    angle = -1
     # find the closest stuff and shoot
     for stuff in self.map_info['stuffs']:
-      if util.distance(self.player_agent.position, stuff.position) < 200:
-        angle = util.angle(self.player_agent.position, stuff.position)
-        self.player_agent.do_shoot_action(self, [1, angle])
-        break
+      dist = util.distance(self.player_agent.position, stuff.position)
+      if target:
+        if dist < 200 and util.distance(self.player_agent.position, target.position) > dist:
+          angle = util.angle(self.player_agent.position, stuff.position)
+          target = stuff
+      else:
+        if dist < 200:
+          angle = util.angle(self.player_agent.position, stuff.position)
+          target = stuff
     if util.distance(self.player_agent.position, self.player_user.position) < 200:
-      angle = util.angle(self.player_agent.position, stuff.position)
+      angle = util.angle(self.player_agent.position, self.player_user.position)
+      target = self.player_user
+    if target:
       self.player_agent.do_shoot_action(self, [1, angle])
 
   def user_move(self):
@@ -266,23 +275,23 @@ class Game:
     action.append(float(number))
     # do the action
     if (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 1, 0, 0, 0, 0, 0, 0, 0])
+      self.player_user.do_move_action(self, np.array([0, 1, 0, 0, 0, 0, 0, 0, 0]))
     elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 1, 0, 0, 0, 0, 0, 0])
+      self.player_user.do_move_action(self, np.array([0, 0, 1, 0, 0, 0, 0, 0, 0]))
     elif (action[2] == 0 and action[3] == 0 and action[4] == 1 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 0, 1, 0, 0, 0, 0, 0])
+      self.player_user.do_move_action(self, np.array([0, 0, 0, 1, 0, 0, 0, 0, 0]))
     elif (action[2] == 0 and action[3] == 0 and action[4] == 0 and action[5] == 1):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 1, 0, 0, 0, 0])
+      self.player_user.do_move_action(self, np.array([0, 0, 0, 0, 1, 0, 0, 0, 0]))
     elif (action[2] == 1 and action[3] == 0 and action[4] == 1 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 1, 0, 0, 0])
+      self.player_user.do_move_action(self, np.array([0, 0, 0, 0, 0, 1, 0, 0, 0]))
     elif (action[2] == 1 and action[3] == 0 and action[4] == 0 and action[5] == 1):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 1, 0, 0])
+      self.player_user.do_move_action(self, np.array([0, 0, 0, 0, 0, 0, 1, 0, 0]))
     elif (action[2] == 0 and action[3] == 1 and action[4] == 1 and action[5] == 0):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 1, 0])
+      self.player_user.do_move_action(self, np.array([0, 0, 0, 0, 0, 0, 0, 1, 0]))
     elif (action[2] == 0 and action[3] == 1 and action[4] == 0 and action[5] == 1):
-      self.player_user.do_move_action(self, [0, 0, 0, 0, 0, 0, 0, 0, 1])
+      self.player_user.do_move_action(self, np.array([0, 0, 0, 0, 0, 0, 0, 0, 1]))
     else:
-      self.player_user.do_move_action(self, [1, 0, 0, 0, 0, 0, 0, 0, 0])
+      self.player_user.do_move_action(self, np.array([1, 0, 0, 0, 0, 0, 0, 0, 0]))
     self.player_user.do_shoot_action(self, action[0:2])
     
 
@@ -349,11 +358,9 @@ class Game:
         status = True
       elif (self.player_agent.score < self.player_user.score):
         status = True
-      else:
-        status = True
       result = {
         'score': self.player_user.score,
-        'status': status,
+        'result': status,
         'elapsedTime': elapsed_time * 1000
       }
       message = util.encode(result)
@@ -386,10 +393,14 @@ def start():
 
   def timeout ():
     elapsed_time = time.time() - start_time if time.time() - start_time < 60 else 60
-    status = game.player_agent.attr['hp'] == 0 and game.player_user.attr['hp'] > 0
+    status = False
+    if (self.player_agent.attr['hp'] <= 0 or self.player_user.attr['hp'] > self.player_agent.attr['hp']):
+      status = True
+    elif (self.player_agent.score < self.player_user.score):
+      status = True
     result = {
       'score': game.player_user.score,
-      'status': status,
+      'result': status,
       'elapsedTime': elapsed_time * 1000
     }
     message = util.encode(result)

@@ -163,7 +163,7 @@ class Player(GameObject):
     self.position['x'] = min(max(self.position['x'] + self.velocity['x'], 0), 1600)
     self.position['y'] = min(max(self.position['y'] + self.velocity['y'], 0), 900)
     self.shoot_status['cd'] -= 0 if self.shoot_status['cd'] <= 0 else 1
-    self.attr['hp'] += math.log(self.status['hp_regeneration'] + 1) if self.attr['hp'] <= self.attr['maxhp'] else 0
+    self.attr['hp'] += math.log(self.status['hp_regeneration'] + 1, 10) if self.attr['hp'] <= self.attr['maxhp'] else 0
     self.attr['hp'] = max(min(self.attr['hp'], self.attr['maxhp']), 0)
 
   def collide_with(self, collider):

@@ -18,11 +18,6 @@ type Simulation struct {
     Socket *websocket.Conn
 }
 
-type SimulationResult struct {
-    ElapsedTime time.Time
-    Status bool
-}
-
 var simulationQueue chan Simulation
 var resultQueue chan bool
 
